@@ -10,46 +10,45 @@ loadEventListeners();
 
 // Load all event listeners
 function loadEventListeners() {
-// DOM Load even
-document.addEventListener('DOMContentLoaded', getTasks);
-// Add task event
-form.addEventListener('submit', addTask);
-
-// Remove task event
-taskList.addEventListener('click', removeTask);
-
-// Clear Task Event
-clearBtn.addEventListener('click', clearTasks);
-// Filter tasks event
-filter.addEventListener('keyup', filterTasks);
+  // DOM Load event
+  document.addEventListener('DOMContentLoaded', getTasks);
+  // Add task event
+  form.addEventListener('submit', addTask);
+  // Remove task event
+  taskList.addEventListener('click', removeTask);
+  // Clear task event
+  clearBtn.addEventListener('click', clearTasks);
+  // Filter tasks event
+  filter.addEventListener('keyup', filterTasks);
 }
+
 // Get Tasks from LS
 function getTasks() {
   let tasks;
-  if(localStorage.getItem('tasks') === null){ // Create new array is there isn't one already named 'tasks' in LS
+  if(localStorage.getItem('tasks') === null){
     tasks = [];
   } else {
-    tasks = JSON.parse(localStorage.getItem('tasks')); // If there is one, grab the array
+    tasks = JSON.parse(localStorage.getItem('tasks'));
   }
+
   tasks.forEach(function(task){
     // Create li element
-  const li = document.createElement('li');
-  // Add class
-  li.className = 'collection-item';
-  // Create text node and append to li
-  li.appendChild(document.createTextNode(task));
-  // Create new link element
-  const link = document.createElement('a');
-  // Add class
-  link.className = 'delete-item secondary-content';
-  // Add icon html
-  link.innerHTML = '<i class="material-icons">clear</i>';
-  // Append the link to li
-  li.appendChild(link);
+    const li = document.createElement('li');
+    // Add class
+    li.className = 'collection-item';
+    // Create text node and append to li
+    li.appendChild(document.createTextNode(task));
+    // Create new link element
+    const link = document.createElement('a');
+    // Add class
+    link.className = 'delete-item secondary-content';
+    // Add icon html
+    link.innerHTML = '<i class="fa fa-remove"></i>';
+    // Append the link to li
+    li.appendChild(link);
 
-  // Append li to ul
-  taskList.appendChild(li);
-
+    // Append li to ul
+    taskList.appendChild(li);
   });
 }
 
@@ -70,14 +69,14 @@ function addTask(e) {
   // Add class
   link.className = 'delete-item secondary-content';
   // Add icon html
-  link.innerHTML = '<i class="material-icons">clear</i>';
+  link.innerHTML = '<i class="fa fa-remove"></i>';
   // Append the link to li
   li.appendChild(link);
 
   // Append li to ul
   taskList.appendChild(li);
 
-  // Store in Local Storage
+  // Store in LS
   storeTaskInLocalStorage(taskInput.value);
 
   // Clear input
@@ -86,33 +85,36 @@ function addTask(e) {
   e.preventDefault();
 }
 
-// Store task function
-function storeTaskInLocalStorage(task){ //task is placeholder, in this case arg is taskInput.value
+// Store Task
+function storeTaskInLocalStorage(task) {
   let tasks;
-  if(localStorage.getItem('tasks') === null){ // Create new array is there isn't one already named 'tasks' in LS
+  if(localStorage.getItem('tasks') === null){
     tasks = [];
   } else {
-    tasks = JSON.parse(localStorage.getItem('tasks')); // If there is one, grab the array
+    tasks = JSON.parse(localStorage.getItem('tasks'));
   }
-  tasks.push(task); //push task or taskIbput.value onto current 'tasks' array
 
-  localStorage.setItem('tasks', JSON.stringify(tasks)); // update 'tasks' array in local storage
+  tasks.push(task);
+
+  localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-//Remove task
+// Remove Task
 function removeTask(e) {
   if(e.target.parentElement.classList.contains('delete-item')) {
-  if (confirm('Are you sure?')) {
-    e.target.parentElement.parentElement.remove();
+    if(confirm('Are You Sure?')) {
+      e.target.parentElement.parentElement.remove();
+
+      // Remove from LS
+      removeTaskFromLocalStorage(e.target.parentElement.parentElement);
+    }
   }
-}
-  removeTaskFromLocalStorage(e.target.parentElement.parentElement);
 }
 
 // Remove from LS
 function removeTaskFromLocalStorage(taskItem) {
   let tasks;
-  if (localStorage.getItem('tasks') === null){
+  if(localStorage.getItem('tasks') === null){
     tasks = [];
   } else {
     tasks = JSON.parse(localStorage.getItem('tasks'));
@@ -125,37 +127,38 @@ function removeTaskFromLocalStorage(taskItem) {
   });
 
   localStorage.setItem('tasks', JSON.stringify(tasks));
-
 }
 
-function clearTasks(){
-  // taskList.innerHTML = ''; this way is slower than while loop
+// Clear Tasks
+function clearTasks() {
+  // taskList.innerHTML = '';
 
-
+  // Faster
   while(taskList.firstChild) {
-    taskList.removeChild(taskList.firstChild) // jsperf.com/innerhtml-vs-removechild
+    taskList.removeChild(taskList.firstChild);
   }
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // https://jsperf.com/innerhtml-vs-removechild
+
   // Clear from LS
   clearTasksFromLocalStorage();
 }
 
-//Clear Tasks from Local Storage function
+// Clear Tasks from LS
 function clearTasksFromLocalStorage() {
-  localStorage.removeItem('tasks');
+  localStorage.clear();
 }
-// Filter Tasks
-function filterTasks(e){
-  const text = e.target.value.toLowerCase(); // e is event object and method target is caught from event listener and then value is value of target
 
-  document.querySelectorAll('.collection-item').forEach // works because is node list
-  (function(task){
+// Filter Tasks
+function filterTasks(e) {
+  const text = e.target.value.toLowerCase();
+
+  document.querySelectorAll('.collection-item').forEach(function(task){
     const item = task.firstChild.textContent;
-    if(item.toLowerCase().indexOf(text) != -1){ // -1 = no match so not equal to -1 means match
+    if(item.toLowerCase().indexOf(text) != -1){
       task.style.display = 'block';
-    }else {
+    } else {
       task.style.display = 'none';
     }
   });
 }
-
