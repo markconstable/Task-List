@@ -106,14 +106,14 @@ function removeTask(e) {
     e.target.parentElement.parentElement.remove();
   }
 }
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  removeTaskFromLocalStorage(e.target.parentElement.parentElement);
 }
 
 // Remove from LS
 function removeTaskFromLocalStorage(taskItem) {
   let tasks;
   if (localStorage.getItem('tasks') === null){
-    tasks = [];localStorage.setItem('tasks', JSON.stringify(tasks));
+    tasks = [];
   } else {
     tasks = JSON.parse(localStorage.getItem('tasks'));
   }
